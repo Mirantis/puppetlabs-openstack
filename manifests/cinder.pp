@@ -3,8 +3,14 @@ class openstack::cinder(
   $rabbit_password,
   $rabbit_host     = '127.0.0.1',
   $volume_group    = 'cinder-volumes',
-  $enabled         = true
+  $enabled         = true,
+  $purge_cinder_config = true,
 ) {
+  if ($purge_cinder_config) {
+    resources { 'cinder_config':
+      purge => true,
+    }
+  }
 
   class { 'cinder::base':
     rabbit_password => $rabbit_password,
