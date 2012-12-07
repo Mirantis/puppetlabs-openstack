@@ -4,7 +4,8 @@ class openstack::cinder(
   $rabbit_host     = '127.0.0.1',
   $volume_group    = 'cinder-volumes',
   $enabled         = true,
-  $purge_cinder_config = true,
+  $manage_volumes  = true,
+  $purge_cinder_config = true
 ) {
   if ($purge_cinder_config) {
     resources { 'cinder_config':
@@ -19,13 +20,14 @@ class openstack::cinder(
     verbose         => $verbose,
   }
 
-  # Install / configure nova-volume
-  class { 'cinder::volume':
-    enabled => $enabled,
-  }
-  if $enabled {
-    class { 'cinder::volume::iscsi':
-      volume_group     => $volume_group,
+  if $manage_volumes {
+    class { 'cinder::volume':
+      enabled => $enabled,
+    }
+    if $enabled {
+      class { 'cinder::volume::iscsi':
+        volume_group     => $volume_group,
+      }
     }
   }
 }
