@@ -5,7 +5,8 @@ class openstack::cinder(
   $volume_group    = 'cinder-volumes',
   $enabled         = true,
   $manage_volumes  = true,
-  $purge_cinder_config = true
+  $purge_cinder_config = true,
+  $package_ensure  = 'present'
 ) {
   if ($purge_cinder_config) {
     resources { 'cinder_config':
@@ -14,6 +15,7 @@ class openstack::cinder(
   }
 
   class { 'cinder::base':
+    package_ensure  => $package_ensure,
     rabbit_password => $rabbit_password,
     rabbit_host     => $rabbit_host,
     sql_connection  => $sql_connection,
@@ -22,6 +24,7 @@ class openstack::cinder(
 
   if $manage_volumes {
     class { 'cinder::volume':
+      package_ensure  => $package_ensure,
       enabled => $enabled,
     }
     if $enabled {
